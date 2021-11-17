@@ -1,3 +1,6 @@
+
+openssl x509 -req -in developer.csr -CA pki/ca.crt -CAkey pki/ca.key -CAcreateserial -out developer.crt -days 500
+
 ps@DESKTOP-VBOO2G5:~/developer$ kubectl create -f role.yaml
 role.rbac.authorization.k8s.io/deployment-manager created
 ps@DESKTOP-VBOO2G5:~/developer$ alias k=kubectl
@@ -25,3 +28,6 @@ ps@DESKTOP-VBOO2G5:~/developer$ k --kubeconfig /home/ps/.kube/config config view
 developer-context kubernetes-admin@kubernetesps@DESKTOP-VBOO2G5:~/developer$
 
 
+   74  k --kubeconfig config get pods
+   75  k --kubeconfig config get pods -n javaproject
+   76  k --kubeconfig /home/ps/.kube/config get pods -n javaproject
