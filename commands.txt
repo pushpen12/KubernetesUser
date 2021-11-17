@@ -1,39 +1,44 @@
+#creating alias for our system, so we can use shortcut
+ps@DESKTOP-VBOO2G5:~/developer$ alias k=kubectl
+#create a namespace for specific user or project
 k create ns javaproject
+#check created namespace
 k get ns
+#create a folder where we have to save key files
 mkdir developer && cd developer
+#generate key for user
 openssl genrsa -out developer.key 2048
+#generating csr for same user
 openssl req -new -key developer.key -out developer.csr -subj "/CN=developer/O=developer"
+#requesting ca to approve the keys
 openssl x509 -req -in developer.csr -CA pki/ca.crt -CAkey pki/ca.key -CAcreateserial -out developer.crt -days 500
-
+#create a role which should assign to user
 ps@DESKTOP-VBOO2G5:~/developer$ kubectl create -f role.yaml
 role.rbac.authorization.k8s.io/deployment-manager created
-ps@DESKTOP-VBOO2G5:~/developer$ alias k=kubectl
+#checking new role
 ps@DESKTOP-VBOO2G5:~/developer$ k get roles -n javaproject
 NAME                 CREATED AT
 deployment-manager   2021-11-17T17:54:53Z
+#creating rolebinding files
 ps@DESKTOP-VBOO2G5:~/developer$ k create -f rolebinding.yaml
 rolebinding.rbac.authorization.k8s.io/deployment-manager-binding created
-ps@DESKTOP-VBOO2G5:~/developer$ k get rolebindings -n javaproject
-NAME                         ROLE                      AGE
-deployment-manager-binding   Role/deployment=manager   15s
-ps@DESKTOP-VBOO2G5:~/developer$ k create -f rolebinding.yaml
-rolebinding.rbac.authorization.k8s.io/deployment-manager-binding created
+#checking rolebinding in k8s cluster
 ps@DESKTOP-VBOO2G5:~/developer$ k get rolebindings -n javaproject
 NAME                         ROLE                      AGE
 deployment-manager-binding   Role/deployment-manager   5s
+## setting up credentials in .kube config files
 ps@DESKTOP-VBOO2G5:~/developer$ k config set-credentials developer --client-certificate=/home/ps/developer/developer.crt --client-key=/home/ps/developer/dveloper.key
 User "developer" set.
 ps@DESKTOP-VBOO2G5:~/developer$
+#
 ps@DESKTOP-VBOO2G5:~/developer$ k  config set-context developer-context --cluster=kubernetes --namespace=javaproject --user=developer
 Context "developer-context" created.
-ps@DESKTOP-VBOO2G5:~/developer$
-
+#checking no of contexts in config file using json method
 ps@DESKTOP-VBOO2G5:~/developer$ k --kubeconfig /home/ps/.kube/config config view -o jsonpath='{.contexts[*].name}'
-developer-context kubernetes-admin@kubernetesps@DESKTOP-VBOO2G5:~/developer$
+developer-context kubernetes-admin@kubernetes
 
-
-   74  k --kubeconfig config get pods
-   75  k --kubeconfig config get pods -n javaproject
-   76  k --kubeconfig /home/ps/.kube/config get pods -n javaproject
-
+#
+k --kubeconfig config get pods
+k --kubeconfig config get pods -n javaproject
+k --kubeconfig /home/ps/.kube/config get pods -n javaproject
 k --kubeconfig /home/ps/.kube/config cluster-info
