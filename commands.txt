@@ -1,0 +1,27 @@
+ps@DESKTOP-VBOO2G5:~/developer$ kubectl create -f role.yaml
+role.rbac.authorization.k8s.io/deployment-manager created
+ps@DESKTOP-VBOO2G5:~/developer$ alias k=kubectl
+ps@DESKTOP-VBOO2G5:~/developer$ k get roles -n javaproject
+NAME                 CREATED AT
+deployment-manager   2021-11-17T17:54:53Z
+ps@DESKTOP-VBOO2G5:~/developer$ k create -f rolebinding.yaml
+rolebinding.rbac.authorization.k8s.io/deployment-manager-binding created
+ps@DESKTOP-VBOO2G5:~/developer$ k get rolebindings -n javaproject
+NAME                         ROLE                      AGE
+deployment-manager-binding   Role/deployment=manager   15s
+ps@DESKTOP-VBOO2G5:~/developer$ k create -f rolebinding.yaml
+rolebinding.rbac.authorization.k8s.io/deployment-manager-binding created
+ps@DESKTOP-VBOO2G5:~/developer$ k get rolebindings -n javaproject
+NAME                         ROLE                      AGE
+deployment-manager-binding   Role/deployment-manager   5s
+ps@DESKTOP-VBOO2G5:~/developer$ k config set-credentials developer --client-certificate=/home/ps/developer/developer.crt --client-key=/home/ps/developer/dveloper.key
+User "developer" set.
+ps@DESKTOP-VBOO2G5:~/developer$
+ps@DESKTOP-VBOO2G5:~/developer$ k  config set-context developer-context --cluster=kubernetes --namespace=javaproject --user=developer
+Context "developer-context" created.
+ps@DESKTOP-VBOO2G5:~/developer$
+
+ps@DESKTOP-VBOO2G5:~/developer$ k --kubeconfig /home/ps/.kube/config config view -o jsonpath='{.contexts[*].name}'
+developer-context kubernetes-admin@kubernetesps@DESKTOP-VBOO2G5:~/developer$
+
+
