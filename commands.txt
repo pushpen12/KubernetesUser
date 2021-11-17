@@ -1,4 +1,8 @@
-
+k create ns javaproject
+k get ns
+mkdir developer && cd developer
+openssl genrsa -out developer.key 2048
+openssl req -new -key developer.key -out developer.csr -subj "/CN=developer/O=developer"
 openssl x509 -req -in developer.csr -CA pki/ca.crt -CAkey pki/ca.key -CAcreateserial -out developer.crt -days 500
 
 ps@DESKTOP-VBOO2G5:~/developer$ kubectl create -f role.yaml
@@ -31,3 +35,5 @@ developer-context kubernetes-admin@kubernetesps@DESKTOP-VBOO2G5:~/developer$
    74  k --kubeconfig config get pods
    75  k --kubeconfig config get pods -n javaproject
    76  k --kubeconfig /home/ps/.kube/config get pods -n javaproject
+
+k --kubeconfig /home/ps/.kube/config cluster-info
